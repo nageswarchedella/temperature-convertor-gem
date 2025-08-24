@@ -2,75 +2,86 @@ require "minitest/autorun"
 require "temperature_convertor"
 
 class TemperatureConvertor::ConvertorTest < Minitest::Test
+  def setup
+    @celsius    = TemperatureConvertor::Strategies::Celsius
+    @fahrenheit = TemperatureConvertor::Strategies::Fahrenheit
+    @kelvin     = TemperatureConvertor::Strategies::Kelvin
+    @rankine    = TemperatureConvertor::Strategies::Rankine
+  end
+
   def test_celsius_to_fahrenheit
-    temp = TemperatureConvertor::Temperature.new(100, TemperatureConvertor::Strategies::Celsius)
-    result = TemperatureConvertor::Convertor.convert(temp, TemperatureConvertor::Strategies::Fahrenheit)
-    assert_equal 212, result
+    assert_conversion(100, from: @celsius, to: @fahrenheit, expected: 212)
   end
 
   def test_fahrenheit_to_celsius
-    temp = TemperatureConvertor::Temperature.new(212, TemperatureConvertor::Strategies::Fahrenheit)
-    result = TemperatureConvertor::Convertor.convert(temp, TemperatureConvertor::Strategies::Celsius)
-    assert_equal 100, result
+    assert_conversion(212, from: @fahrenheit, to: @celsius, expected: 100)
   end
 
   def test_celsius_to_kelvin
-    temp = TemperatureConvertor::Temperature.new(0, TemperatureConvertor::Strategies::Celsius)
-    result = TemperatureConvertor::Convertor.convert(temp, TemperatureConvertor::Strategies::Kelvin)
-    assert_equal 273.15, result
+    assert_conversion(0, from: @celsius, to: @kelvin, expected: 273.15)
   end
 
   def test_kelvin_to_celsius
-    temp = TemperatureConvertor::Temperature.new(273.15, TemperatureConvertor::Strategies::Kelvin)
-    result = TemperatureConvertor::Convertor.convert(temp, TemperatureConvertor::Strategies::Celsius)
-    assert_equal 0, result
+    assert_conversion(273.15, from: @kelvin, to: @celsius, expected: 0)
   end
 
   def test_fahrenheit_to_kelvin
-    temp = TemperatureConvertor::Temperature.new(32, TemperatureConvertor::Strategies::Fahrenheit)
-    result = TemperatureConvertor::Convertor.convert(temp, TemperatureConvertor::Strategies::Kelvin)
-    assert_in_delta 273.15, result, 0.01
+    assert_conversion(32, from: @fahrenheit, to: @kelvin, expected: 273.15)
   end
 
   def test_kelvin_to_fahrenheit
-    temp = TemperatureConvertor::Temperature.new(273.15, TemperatureConvertor::Strategies::Kelvin)
-    result = TemperatureConvertor::Convertor.convert(temp, TemperatureConvertor::Strategies::Fahrenheit)
-    assert_in_delta 32, result, 0.01
+    assert_conversion(273.15, from: @kelvin, to: @fahrenheit, expected: 32)
   end
 
   def test_celsius_to_rankine
-    temp = TemperatureConvertor::Temperature.new(0, TemperatureConvertor::Strategies::Celsius)
-    result = TemperatureConvertor::Convertor.convert(temp, TemperatureConvertor::Strategies::Rankine)
-    assert_in_delta 491.67, result, 0.01
+    assert_conversion(0, from: @celsius, to: @rankine, expected: 491.67)
   end
 
   def test_rankine_to_celsius
-    temp = TemperatureConvertor::Temperature.new(491.67, TemperatureConvertor::Strategies::Rankine)
-    result = TemperatureConvertor::Convertor.convert(temp, TemperatureConvertor::Strategies::Celsius)
-    assert_in_delta 0, result, 0.01
+    assert_conversion(491.67, from: @rankine, to: @celsius, expected: 0)
   end
 
   def test_fahrenheit_to_rankine
-    temp = TemperatureConvertor::Temperature.new(32, TemperatureConvertor::Strategies::Fahrenheit)
-    result = TemperatureConvertor::Convertor.convert(temp, TemperatureConvertor::Strategies::Rankine)
-    assert_in_delta 491.67, result, 0.01
+    assert_conversion(32, from: @fahrenheit, to: @rankine, expected: 491.67)
   end
 
   def test_rankine_to_fahrenheit
-    temp = TemperatureConvertor::Temperature.new(491.67, TemperatureConvertor::Strategies::Rankine)
-    result = TemperatureConvertor::Convertor.convert(temp, TemperatureConvertor::Strategies::Fahrenheit)
-    assert_in_delta 32, result, 0.01
+    assert_conversion(491.67, from: @rankine, to: @fahrenheit, expected: 32)
   end
 
   def test_kelvin_to_rankine
-    temp = TemperatureConvertor::Temperature.new(273.15, TemperatureConvertor::Strategies::Kelvin)
-    result = TemperatureConvertor::Convertor.convert(temp, TemperatureConvertor::Strategies::Rankine)
-    assert_in_delta 491.67, result, 0.01
+    assert_conversion(273.15, from: @kelvin, to: @rankine, expected: 491.67)
   end
 
   def test_rankine_to_kelvin
-    temp = TemperatureConvertor::Temperature.new(491.67, TemperatureConvertor::Strategies::Rankine)
-    result = TemperatureConvertor::Convertor.convert(temp, TemperatureConvertor::Strategies::Kelvin)
-    assert_in_delta 273.15, result, 0.01
+    assert_conversion(491.67, from: @rankine, to: @kelvin, expected: 273.15)
+  end
+
+  def test_initialize_with_string_raises_error
+    assert_raises(TypeError) do
+      TemperatureConvertor::Temperature.new("a string", @celsius)
+    end
+  end
+
+  def test_initialize_with_nil_raises_error
+    assert_raises(TypeError) do
+      TemperatureConvertor::Temperature.new(nil, @celsius)
+    end
+  end
+
+  def test_celsius_to_fahrenheit_with_negative_value
+    assert_conversion(-10, from: @celsius, to: @fahrenheit, expected: 14)
+  end
+
+  def test_celsius_to_fahrenheit_with_float_value
+    assert_conversion(37.5, from: @celsius, to: @fahrenheit, expected: 99.5)
+  end
+
+  private
+
+  def assert_conversion(value, from:, to:, expected:)
+    temperature = TemperatureConvertor::Temperature.new(value, from)
+    result = TemperatureConvertor::Convertor.convert(temperature, to)
+    assert_in_delta expected, result, 0.01
   end
 end
