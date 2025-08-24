@@ -1,6 +1,6 @@
 module TemperatureConvertor
   module Strategies
-    class Fahrenheit
+    class Fahrenheit < BaseStrategy
       def to_celsius(value)
         (value - 32) * 5.0/9.0
       end

@@ -1,6 +1,6 @@
 module TemperatureConvertor
   module Strategies
-    class Rankine
+    class Rankine < BaseStrategy
       def to_celsius(value)
         (value - 491.67) * 5.0/9.0
       end

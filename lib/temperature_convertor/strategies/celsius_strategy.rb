@@ -1,6 +1,8 @@
+require_relative 'base_strategy.rb'
+
 module TemperatureConvertor
   module Strategies
-    class Celsius
+    class Celsius < BaseStrategy
       def to_celsius(value)
         value
       end

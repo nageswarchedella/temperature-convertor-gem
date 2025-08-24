@@ -1,6 +1,6 @@
 module TemperatureConvertor
   module Strategies
-    class Kelvin
+    class Kelvin < BaseStrategy
       def to_celsius(value)
         value - 273.15
       end

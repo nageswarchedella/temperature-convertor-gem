@@ -5,7 +5,8 @@ module TemperatureConvertor
     def initialize(value, scale)
       unless value.is_a?(Numeric)
         raise TypeError, "Expecting value to be a number or integer or floating point number"
-      end
+      end 
+
       @value = value
       @scale = scale
     end
