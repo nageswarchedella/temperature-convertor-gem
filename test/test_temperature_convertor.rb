@@ -8,11 +8,22 @@ class TemperatureConvertor::ConvertorTest < Minitest::Test
   class IncompleteStrategy < TemperatureConvertor::BaseStrategy
   end
 
+  class NewtonStrategy < TemperatureConvertor::BaseStrategy
+    def to_celsius(value)
+      value.to_f * 100 / 33
+    end
+
+    def from_celsius(value)
+      value.to_f * 33 / 100
+    end
+  end
+
   def setup
     @celsius    = TemperatureConvertor::CelsiusStrategy
     @fahrenheit = TemperatureConvertor::FahrenheitStrategy
     @kelvin     = TemperatureConvertor::KelvinStrategy
     @rankine    = TemperatureConvertor::RankineStrategy
+    @newton     = NewtonStrategy
   end
 
   def test_celsius_to_fahrenheit
@@ -61,6 +72,14 @@ class TemperatureConvertor::ConvertorTest < Minitest::Test
 
   def test_rankine_to_kelvin
     assert_conversion(491.67, from: @rankine, to: @kelvin, expected: 273.15)
+  end
+
+  def test_celsius_to_newton
+    assert_conversion(100, from: @celsius, to: @newton, expected: 33)
+  end
+
+  def test_newton_to_celsius
+    assert_conversion(33, from: @newton, to: @celsius, expected: 100)
   end
 
   def test_celsius_to_fahrenheit_with_negative_value
