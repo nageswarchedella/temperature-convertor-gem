@@ -10,5 +10,6 @@ Gem::Specification.new do |s|
   s.files       = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   s.homepage    = "https://github.com/nageswarchedella/TemperatureConvertor"
   s.license     = "MIT"
+  s.executables << "temperature_convertor"
   s.require_paths = ["lib"]
 end

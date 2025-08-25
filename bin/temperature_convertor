@@ -1,0 +1,50 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH.unshift(File.expand_path('../lib', __dir__))
+require 'temperature_convertor'
+
+STRATEGY_MAP = {
+  'c' => TemperatureConvertor::Strategies::Celsius,
+  'f' => TemperatureConvertor::Strategies::Fahrenheit,
+  'k' => TemperatureConvertor::Strategies::Kelvin,
+  'r' => TemperatureConvertor::Strategies::Rankine
+}.freeze
+
+def print_usage_and_exit
+  puts "Usage: temperature_convertor <value> <from_unit> to <to_unit>"
+  puts "Example: temperature_convertor 100 C to F"
+  puts "Available units: C, F, K, R"
+  exit 1
+end
+
+print_usage_and_exit if ARGV.length != 4 || ARGV[2].downcase != 'to'
+
+begin
+  value = Float(ARGV[0])
+rescue ArgumentError
+  puts "Error: Invalid value provided. Please enter a number."
+  print_usage_and_exit
+end
+
+from_key = ARGV[1].downcase
+to_key = ARGV[3].downcase
+
+from_scale = STRATEGY_MAP[from_key]
+to_scale = STRATEGY_MAP[to_key]
+
+unless from_scale && to_scale
+  puts "Error: Invalid temperature unit provided."
+  print_usage_and_exit
+end
+
+begin
+  temperature = TemperatureConvertor::Temperature.new(value, from_scale)
+  result = TemperatureConvertor::Convertor.convert(temperature, to_scale)
+  puts "#{value} #{from_key.upcase} is #{result.round(2)} #{to_key.upcase}"
+rescue TypeError => e
+  puts "Error: #{e.message}"
+  print_usage_and_exit
+rescue TemperatureConvertor::InvalidStrategyError => e
+  puts "Error: #{e.message}"
+  print_usage_and_exit
+end

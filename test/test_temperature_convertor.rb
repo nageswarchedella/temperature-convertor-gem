@@ -5,16 +5,16 @@ class TemperatureConvertor::ConvertorTest < Minitest::Test
   class CustomStrategy
   end
 
-  class IncompleteStrategy < TemperatureConvertor::Strategies::BaseStrategy
+  class IncompleteStrategy < TemperatureConvertor::BaseStrategy
   end
 
   def setup
-    @celsius    = TemperatureConvertor::Strategies::Celsius
-    @fahrenheit = TemperatureConvertor::Strategies::Fahrenheit
-    @kelvin     = TemperatureConvertor::Strategies::Kelvin
-    @rankine    = TemperatureConvertor::Strategies::Rankine
+    @celsius    = TemperatureConvertor::CelsiusStrategy
+    @fahrenheit = TemperatureConvertor::FahrenheitStrategy
+    @kelvin     = TemperatureConvertor::KelvinStrategy
+    @rankine    = TemperatureConvertor::RankineStrategy
   end
-s
+
   def test_celsius_to_fahrenheit
     assert_conversion(100, from: @celsius, to: @fahrenheit, expected: 212)
   end
